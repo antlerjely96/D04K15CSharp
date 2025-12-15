@@ -1,0 +1,38 @@
+﻿@page "/Categories/Edit/{Id:int}"
+@rendermode InteractiveServer
+@using demoWeb.Models
+@using demoWeb.Services
+@inject ICategoryService CategoryService
+<h3>Edit</h3>
+
+<EditForm Model="category" FormName="EditCategory" OnValidSubmit="SaveCategory">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Name: </label>
+        <InputText @bind-Value="category.Name"/>
+        <ValidationMessage For="() => category.Name"/>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    public Category category = new Category();
+    [Inject] NavigationManager Navigation { get; set; }
+    [Parameter] public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.GetCategoryByIdAsync(Id);
+    }
+
+    private async Task SaveCategory()
+    {
+        category.Id = Id;
+        await CategoryService.UpdateCategoryAsync(category);
+        Navigation.NavigateTo("/categories", true);
+    }
+}

@@ -1,0 +1,31 @@
+﻿@page "/Categories/Create"
+@rendermode InteractiveServer
+@using demoWeb.Models
+@using demoWeb.Services
+@inject ICategoryService CategoryService
+<h3>Create</h3>
+
+<EditForm Model="category" FormName="createCategory" OnValidSubmit="SaveCategory">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Name: </label>
+        <InputText @bind-Value="category.Name"/>
+        <ValidationMessage For="() => category.Name"/>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    public Category category = new Category();
+    [Inject] NavigationManager Navigation { get; set; }
+
+    private async Task SaveCategory()
+    {
+        await CategoryService.CreateCategoryAsync(category);
+        Navigation.NavigateTo("/categories", true);
+    }
+}
